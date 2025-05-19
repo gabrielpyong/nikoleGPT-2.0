@@ -284,28 +284,67 @@
             chatMessages.scrollTop = chatMessages.scrollHeight; 
         }
 
-        function handleSendMessage() {
-            const message = chatInput.value.trim();
-            if (message) {
-                addMessageToChat(message, 'user');
-                chatInput.value = '';
-                chatInput.style.height = 'auto'; 
-                chatInput.style.overflowY = 'hidden';
+        async function handleSendMessage() { // Adicionamos 'async' aqui!
+    const message = chatInput.value.trim();
+    if (message) {
+        addMessageToChat(message, 'user'); // Mostra a mensagem do usuário na tela
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        chatInput.style.overflowY = 'hidden';
 
-                const thinkingDivId = 'ai-thinking-message';
-                let thinkingDiv = document.getElementById(thinkingDivId);
-                if (!thinkingDiv) {
-                    thinkingDiv = document.createElement('div');
-                    thinkingDiv.id = thinkingDivId;
-                    thinkingDiv.classList.add('flex', 'justify-start', 'mb-3');
-                    thinkingDiv.innerHTML = `
-                        <div class="chat-bubble-ai p-3 rounded-lg max-w-xs sm:max-w-md lg:max-w-lg">
-                            <p class="text-sm italic">NikoleGPT está processando sua genialidade...</p>
-                        </div>
-                    `;
-                    chatMessages.appendChild(thinkingDiv);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
+        // Mostra "NikoleGPT está processando..."
+        const thinkingDivId = 'ai-thinking-message';
+        let thinkingDiv = document.getElementById(thinkingDivId);
+        if (!thinkingDiv) {
+            thinkingDiv = document.createElement('div');
+            thinkingDiv.id = thinkingDivId;
+            thinkingDiv.classList.add('flex', 'justify-start', 'mb-3');
+            thinkingDiv.innerHTML = `
+                <div class="chat-bubble-ai p-3 rounded-lg max-w-xs sm:max-w-md lg:max-w-lg">
+                    <p class="text-sm italic">NikoleGPT está consultando os astros (e o Sil)...</p>
+                </div>
+            `;
+            chatMessages.appendChild(thinkingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // AGORA A MÁGICA ACONTECE AQUI:
+        try {
+            // Chamamos nossa Função Serverless /api/chat
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userMessage: message }), // Enviamos a mensagem do usuário
+            });
+
+            // Remove o "digitando..." assim que tivermos uma resposta ou erro do fetch
+            const existingThinkingDiv = document.getElementById(thinkingDivId);
+            if (existingThinkingDiv) {
+                chatMessages.removeChild(existingThinkingDiv);
+            }
+
+            if (!response.ok) {
+                // Se o servidor respondeu com um erro (ex: 400, 500)
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Erro do servidor: ${response.status}`);
+            }
+
+            const data = await response.json();
+            addMessageToChat(data.reply, 'ai'); // Adiciona a resposta REAL da IA
+
+        } catch (error) {
+            console.error("Erro ao enviar mensagem:", error);
+            // Remove o "digitando..." em caso de erro na chamada fetch
+            const existingThinkingDivOnError = document.getElementById(thinkingDivId);
+            if (existingThinkingDivOnError) {
+                chatMessages.removeChild(existingThinkingDivOnError);
+            }
+            addMessageToChat(`Ops! Deu ruim na comunicação com meus superpoderes. ${error.message}. O Sil, com sua sabedoria, saberia o que fazer! Tente de novo.`, 'ai');
+        }
+    
+
                 
                 // Simulação de resposta da IA com nova personalidade e exaltação ao Sil
                 setTimeout(() => {
