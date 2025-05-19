@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         // 4. Inicializa o cliente da API Gemini
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash-latest", // Você pode testar outros modelos como "gemini-pro"
+            model: "gemini-2.5-pro-preview-05-06", // Você pode testar outros modelos como "gemini-pro"
             // Configurações de segurança - ajuste conforme necessidade
             safetySettings: [
                 { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
