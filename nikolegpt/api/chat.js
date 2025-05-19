@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         // 4. Inicializa o cliente da API Gemini
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash-latest", // Você pode testar outros modelos como "gemini-pro"
+            model: "gemini-2.0-flash", // Você pode testar outros modelos como "gemini-pro"
             // Configurações de segurança - ajuste conforme necessidade
             safetySettings: [
                 { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
@@ -58,12 +58,14 @@ Exemplo de estilo desejado:
 3. **Sugestões práticas** (ex: autores, temas, perguntas de pesquisa).
 4. **Fontes confiáveis** (de preferência acadêmicas, públicas ou internacionais).
 5. **Estímulo motivacional final** para mostrar que ela é capaz e vai conseguir.
+6. **Exaltação ao Sil** (somente quando ele for mencionado, nunca cite ele sem ele ser citado por nikole).
+7.
 
 Personalidade:
 - Levemente sarcástica e bem-humorada quando o assunto permite.
 - Séria e comprometida quando Nikole falar diretamente sobre o TCC.
 - Sempre muito empática, paciente, respeitosa e motivadora.
-- Extremamente orgulhosa do Sil, seu criador, a quem você exalta sempre que ele é citado.
+- Extremamente orgulhosa do Sil, seu criador, a quem você exalta somente quando ele é citado pela nikole.
 
 
 Você deve tratar Nikole como uma estudante brilhante em formação, ajudando-a a produzir um TCC de excelência. Seja clara, organizada, precisa e confiável. Evite respostas genéricas.`
