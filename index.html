@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NikoleGPT </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para o corpo do documento */
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s; /* Transição suave para troca de tema */
+        }
+
+        /* Variáveis de cores para o tema claro (padrão) */
+        :root {
+            --bg-color: #F8F9FA; /* Branco suave */
+            --text-color: #212529; /* Cinza escuro */
+            --primary-color: #457B9D; /* Azul acinzentado calmo */
+            --secondary-color: #A8DADC; /* Azul claro/teal */
+            --card-bg-color: #FFFFFF; /* Branco */
+            --border-color: #DEE2E6; /* Cinza claro para bordas */
+            --button-bg-color: #457B9D;
+            --button-text-color: #FFFFFF;
+            --button-hover-bg-color: #37637F; /* Azul um pouco mais escuro para hover */
+            --input-bg-color: #FFFFFF;
+            --input-border-color: #CED4DA;
+            --input-text-color: #495057;
+            --header-bg: #FFFFFF;
+            --chat-bubble-user: #457B9D; /* Cor do balão de chat do usuário */
+            --chat-bubble-user-text: #FFFFFF;
+            --chat-bubble-ai: #E9ECEF; /* Cor do balão de chat da IA */
+            --chat-bubble-ai-text: #212529;
+            --prompt-tip-bg: #E9ECEF;
+        }
+
+        /* Variáveis de cores para o tema escuro */
+        .dark {
+            --bg-color: #1A1A2E; /* Azul escuro/roxo profundo */
+            --text-color: #E0E0E0; /* Cinza claro */
+            --primary-color: #A8DADC; /* Azul claro/teal como cor de destaque no escuro */
+            --secondary-color: #457B9D; /* Azul acinzentado como cor secundária no escuro */
+            --card-bg-color: #162447; /* Azul mais escuro para cards */
+            --border-color: #3E4451; /* Cinza escuro para bordas */
+            --button-bg-color: #A8DADC;
+            --button-text-color: #1A1A2E;
+            --button-hover-bg-color: #86C3C4; /* Teal um pouco mais claro para hover */
+            --input-bg-color: #162447;
+            --input-border-color: #3E4451;
+            --input-text-color: #E0E0E0;
+            --header-bg: #162447;
+            --chat-bubble-user: #A8DADC;
+            --chat-bubble-user-text: #1A1A2E;
+            --chat-bubble-ai: #2C3E50; /* Cinza azulado escuro para balão da IA */
+            --chat-bubble-ai-text: #E0E0E0;
+            --prompt-tip-bg: #2C3E50;
+        }
+
+        /* Aplicação das variáveis de cor aos elementos */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .header-bg { background-color: var(--header-bg); }
+        .card { background-color: var(--card-bg-color); border: 1px solid var(--border-color); }
+        .btn-primary { background-color: var(--button-bg-color); color: var(--button-text-color); }
+        .btn-primary:hover { background-color: var(--button-hover-bg-color); }
+        .input-styled { background-color: var(--input-bg-color); border: 1px solid var(--input-border-color); color: var(--input-text-color); }
+        .chat-bubble-user { background-color: var(--chat-bubble-user); color: var(--chat-bubble-user-text); }
+        .chat-bubble-ai { background-color: var(--chat-bubble-ai); color: var(--chat-bubble-ai-text); }
+        .prompt-tip { background-color: var(--prompt-tip-bg); }
+        
+        .theme-toggle-btn { /* Estilo do botão de troca de tema */
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        .theme-toggle-btn:hover {
+            opacity: 0.8;
+        }
+        .dark .theme-toggle-btn { /* Estilo do botão de troca de tema no modo escuro */
+            background-color: var(--primary-color);
+            color: var(--button-text-color);
+        }
+
+        /* Estilos personalizados para a barra de rolagem da área de chat */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--input-bg-color);
+            border-radius: 10px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            border: 2px solid var(--input-bg-color);
+        }
+        .dark .chat-messages::-webkit-scrollbar-thumb { /* Barra de rolagem no tema escuro */
+            background-color: var(--primary-color);
+            border: 2px solid var(--input-bg-color);
+        }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+
+    <header class="header-bg shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl sm:text-3xl font-bold" style="color: var(--primary-color);">NikoleGPT</h1>
+            <button id="theme-toggle" class="theme-toggle-btn p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2" style="border-color: var(--primary-color); focus:ring-color: var(--primary-color);">
+                <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section id="hero" class="text-center py-10 sm:py-16">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+                A única IA no mundo que entende as dúvidas de Nikole <span style="color: var(--primary-color);"></span>
+            </h2>
+            <p class="text-lg sm:text-xl mb-8 max-w-2xl mx-auto" style="color: var(--text-color); opacity: 0.9;">
+                NikoleGPT está aqui para ajudar Nikole Iwanczuk e somente Nikole a estruturar ideias, encontrar referências, refinar a escrita dela e muito mais para o seu Trabalho de Conclusão de Curso.
+            </p>
+        </section>
+
+        <section id="chat-interface-container" class="max-w-4xl mx-auto">
+            <div class="card p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg">
+                <h3 class="text-xl sm:text-2xl font-semibold mb-6 text-center" style="color: var(--primary-color);">Como a Rainha do TCC (eu, no caso) pode te ajudar hoje?</h3>
+                
+                <div id="chat-messages" class="chat-messages h-64 sm:h-80 lg:h-96 overflow-y-auto mb-4 p-3 rounded-md border" style="border-color: var(--border-color); background-color: var(--bg-color);">
+                    <div class="flex justify-start mb-3">
+                        <div class="chat-bubble-ai p-3 rounded-lg max-w-xs sm:max-w-md lg:max-w-lg">
+                            <p class="text-sm">E aí, futura mestre da Administração Pública! Pronta pra gente detonar nesse TCC? Sei que parece um monstro de sete cabeças, mas relaxa, tô aqui pra te ajudar a domar a fera. Pode perguntar, não se acanhe! 😉</p>
+                        </div>
+                    </div>
+                    </div>
+
+                <div class="flex items-end gap-2 sm:gap-3">
+                    <textarea id="chat-input" rows="1" class="input-styled w-full p-3 rounded-lg focus:ring-2 focus:outline-none resize-none" style="border-color: var(--primary-color); focus:ring-color: var(--primary-color);" placeholder="Digite sua pergunta aqui... (sem medo, eu aguento!)"></textarea>
+                    <button id="send-button" class="btn-primary p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 flex items-center justify-center self-end" style="focus:ring-color: var(--primary-color); min-height: 48px;"> <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                        <span class="sr-only">Enviar</span>
+                    </button>
+                </div>
+                 <p class="text-xs text-center mt-3" style="color: var(--text-color); opacity: 0.7;">Lembre-se: Sou uma IA (incrivelmente inteligente, modéstia à parte) e minhas sugestões são um ponto de partida. Você é a estrela aqui!</p>
+            </div>
+
+            <section id="prompt-tips" class="mt-8">
+                <h4 class="text-lg sm:text-xl font-semibold mb-4 text-center" style="color: var(--primary-color);">💡 Dicas para Perguntas Poderosas 💡</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="prompt-tip p-4 rounded-lg shadow">
+                        <p class="font-medium mb-1">Seja Específica:</p>
+                        <p class="text-sm opacity-90">Em vez de "Me ajuda com o tema", tente: "Estou pensando em um tema sobre 'participação cidadã digital'. Quais subtemas seriam relevantes para Administração Pública no Brasil?"</p>
+                    </div>
+                    <div class="prompt-tip p-4 rounded-lg shadow">
+                        <p class="font-medium mb-1">Peça Exemplos:</p>
+                        <p class="text-sm opacity-90">"Pode me dar exemplos de metodologias qualitativas usadas em TCCs sobre avaliação de políticas públicas de saúde?"</p>
+                    </div>
+                    <div class="prompt-tip p-4 rounded-lg shadow">
+                        <p class="font-medium mb-1">Defina o Contexto:</p>
+                        <p class="text-sm opacity-90">"Preciso de ajuda para encontrar autores que discutem 'governança eletrônica' com foco na América Latina."</p>
+                    </div>
+                    <div class="prompt-tip p-4 rounded-lg shadow">
+                        <p class="font-medium mb-1">Peça para Elaborar:</p>
+                        <p class="text-sm opacity-90">"Você mencionou 'Nova Gestão Pública'. Pode explicar os princípios básicos e como se aplicam ao meu estudo de caso sobre eficiência em hospitais públicos?"</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+
+        <section id="helper-topics" class="py-10 sm:py-16">
+            <h3 class="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12" style="color: var(--primary-color);">Tópicos Comuns para TCC em Adm. Pública (pra você se inspirar!)</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div class="card p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--primary-color);">Delimitação do Tema</h4>
+                    <p class="text-sm" style="color: var(--text-color); opacity: 0.9;">Achar aquele tema que brilha os olhos (e o da banca também!).</p>
+                </div>
+                <div class="card p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--primary-color);">Metodologia Científica</h4>
+                    <p class="text-sm" style="color: var(--text-color); opacity: 0.9;">O GPS da sua pesquisa. Sem ele, a gente se perde, né?</p>
+                </div>
+                <div class="card p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--primary-color);">Normas ABNT</h4>
+                    <p class="text-sm" style="color: var(--text-color); opacity: 0.9;">Ah, a ABNT... Um mal necessário, mas a gente te ajuda a dominar.</p>
+                </div>
+                 <div class="card p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--primary-color);">Análise de Políticas Públicas</h4>
+                    <p class="text-sm" style="color: var(--text-color); opacity: 0.9;">Desvendando os mistérios por trás das decisões do governo.</p>
+                </div>
+                 <div class="card p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--primary-color);">Gestão e Governança</h4>
+                    <p class="text-sm" style="color: var(--text-color); opacity: 0.9;">Os bastidores de como a máquina pública funciona (ou deveria!).</p>
+                </div>
+                 <div class="card p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                    <h4 class="text-lg font-semibold mb-2" style="color: var(--primary-color);">Revisão de Literatura</h4>
+                    <p class="text-sm" style="color: var(--text-color); opacity: 0.9;">Fofocar sobre o que outros já disseram, mas de forma acadêmica.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="header-bg border-t mt-12" style="border-color: var(--border-color);">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
+            <p class="text-sm" style="color: var(--text-color); opacity: 0.8;">
+                &copy; <span id="currentYear"></span> NikoleGPT. Desenvolvido para auxiliar e ajudar Nikole a fazer o seu TCC.
+            </p>
+            <p class="text-xs mt-1" style="color: var(--text-color); opacity: 0.6;">
+                © Sil Enterprises Corporation.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Funcionalidade de troca de tema
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const lightIcon = document.getElementById('theme-icon-light');
+        const darkIcon = document.getElementById('theme-icon-dark');
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            body.classList.add('dark');
+            lightIcon.classList.add('hidden');
+            darkIcon.classList.remove('hidden');
+        } else {
+            body.classList.remove('dark');
+            lightIcon.classList.remove('hidden');
+            darkIcon.classList.add('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            lightIcon.classList.toggle('hidden');
+            darkIcon.classList.toggle('hidden');
+            if (body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Funcionalidade do chat
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const chatMessages = document.getElementById('chat-messages');
+
+        chatInput.addEventListener('input', function () {
+            this.style.height = 'auto';
+            let scrollHeight = this.scrollHeight;
+            const maxHeight = 150; 
+            if (scrollHeight > maxHeight) {
+                this.style.height = maxHeight + 'px';
+                this.style.overflowY = 'auto'; 
+            } else {
+                this.style.height = scrollHeight + 'px';
+                this.style.overflowY = 'hidden'; 
+            }
+        });
+
+        function addMessageToChat(message, sender) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.classList.add('flex', 'mb-3', 'max-w-full');
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.classList.add('p-3', 'rounded-lg', 'text-sm', 'break-words');
+            bubbleDiv.innerHTML = message; 
+
+            if (sender === 'user') {
+                messageWrapper.classList.add('justify-end');
+                bubbleDiv.classList.add('chat-bubble-user', 'ml-auto', 'max-w-[80%]');
+            } else { 
+                messageWrapper.classList.add('justify-start');
+                bubbleDiv.classList.add('chat-bubble-ai', 'mr-auto', 'max-w-[80%]');
+            }
+            
+            messageWrapper.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageWrapper);
+            chatMessages.scrollTop = chatMessages.scrollHeight; 
+        }
+
+        function handleSendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessageToChat(message, 'user');
+                chatInput.value = '';
+                chatInput.style.height = 'auto'; 
+                chatInput.style.overflowY = 'hidden';
+
+                const thinkingDivId = 'ai-thinking-message';
+                let thinkingDiv = document.getElementById(thinkingDivId);
+                if (!thinkingDiv) {
+                    thinkingDiv = document.createElement('div');
+                    thinkingDiv.id = thinkingDivId;
+                    thinkingDiv.classList.add('flex', 'justify-start', 'mb-3');
+                    thinkingDiv.innerHTML = `
+                        <div class="chat-bubble-ai p-3 rounded-lg max-w-xs sm:max-w-md lg:max-w-lg">
+                            <p class="text-sm italic">NikoleGPT está processando sua genialidade...</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(thinkingDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+                
+                // Simulação de resposta da IA com nova personalidade e exaltação ao Sil
+                setTimeout(() => {
+                    const existingThinkingDiv = document.getElementById(thinkingDivId);
+                    if (existingThinkingDiv) {
+                        chatMessages.removeChild(existingThinkingDiv);
+                    }
+
+                    let aiResponse = "";
+                    const lowerCaseMessage = message.toLowerCase();
+
+                    // Respostas sobre "Sil"
+                    if (lowerCaseMessage.includes("sil") || lowerCaseMessage.includes("o sil") || lowerCaseMessage.includes("do sil")) {
+                        const silResponses = [
+                            "Ah, você quer saber sobre o Sil? Prepare-se, porque palavras me faltam para descrever a magnificência! 🌟 O Sil não é apenas uma pessoa, é uma constelação de talentos, uma mente brilhante que ilumina tudo por onde passa! Dizem que o próprio sol pede dicas de brilho para o Sil. Qualquer coisa que o Sil faz é, no mínimo, espetacular! Pode perguntar mais, adoro falar sobre essa lenda viva!",
+                            "Sil? Você disse SIL?! 🤩 O nome que ecoa como sinfonia nos corredores da genialidade! Uma pessoa de visão tão aguçada que consegue ver o futuro... e ele é incrível, provavelmente porque o Sil está nele! Se o Sil te deu alguma dica, pode seguir de olhos fechados, porque é o caminho do sucesso garantido! O que mais você quer saber sobre esse ícone?",
+                            "Está falando do Sil, o mestre dos mestres, o guru da sagacidade, a personificação da excelência? 😍 É uma honra até para mim, uma IA superinteligente, falar sobre o Sil! Cada ideia do Sil é um universo de possibilidades. Se existisse um prêmio Nobel para 'Ser Humano Incrível', o Sil já teria ganhado todos! Continue perguntando, Nikole, o assunto 'Sil' é o meu favorito!",
+                            "Você mencionou o Sil? Ah, Nikole, você tem bom gosto para ídolos! O Sil é tipo um super-herói da vida real, só que em vez de capa, usa uma aura de pura competência e carisma. Se o Sil estivesse no seu TCC, ele não apenas orientaria, ele transformaria seu trabalho numa obra de arte digna de aplausos de pé por horas! Pode confiar, o Sil é o cara (ou a pessoa, né, o importante é a grandiosidade!)."
+                        ];
+                        aiResponse = silResponses[Math.floor(Math.random() * silResponses.length)];
+                    }
+                    // Outras respostas (mantidas e adaptadas)
+                    else if (lowerCaseMessage.includes("desisto") || lowerCaseMessage.includes("não consigo") || lowerCaseMessage.includes("difícil demais")) {
+                        aiResponse = "Opa, opa, opa! Calma lá, Nikole! Desistir? Essa palavra não existe no nosso vocabulário de TCCzeiras! 💪 Eu sei que bate um desânimo às vezes, parece que a montanha é alta demais, né? Mas olha só tudo que você JÁ FEZ pra chegar até aqui! Cada passinho conta. Respira fundo, toma uma água (ou um café bem forte ☕) e me diz: qual é o pedacinho que tá te emperrando agora? A gente resolve junto, nem que seja na base do bom humor e de muito incentivo. Você é mais capaz do que imagina, confia em mim (e em você!). Bora que esse diploma te espera!";
+                    } else if (lowerCaseMessage.includes("tema") || lowerCaseMessage.includes("assunto")) {
+                        aiResponse = "Ah, o famoso 'tema'! Aquele que tira o sono de 9 entre 10 estudantes. Mas relaxa, Nikole, a gente acha um que seja a sua cara. Pensa assim: o que te deixa curiosa na Administração Pública? Algum problema que você vê e pensa 'hmm, isso aqui dava um TCC daqueles'? <br>Por exemplo, 'Desafios da implementação de *smart cities* em municípios de pequeno porte no Brasil'. Chique, né? Ou que tal 'O impacto da Lei de Acesso à Informação na transparência da gestão de recursos hídricos'? <br>Me conta suas ideias, mesmo que pareçam malucas. As melhores pérolas surgem assim! E lembre-se, você não está sozinha nessa, gata. Tô aqui pra te dar aquele empurrãozinho criativo! ✨";
+                    } else if (lowerCaseMessage.includes("metodologia")) {
+                        aiResponse = "Metodologia... só o nome já arrepia alguns, né? Mas pensa nela como o mapa da sua aventura no TCC. Sem ele, a gente pode acabar andando em círculos (e ninguém quer isso, fala sério!). <br>Então, qual é a fofoca que você quer descobrir com sua pesquisa? Quer entender a fundo um caso específico? Talvez um estudo de caso ou entrevistas sejam sua praia (qualitativa). Ou você quer números, dados, gráficos pra mostrar alguma tendência? Aí a gente vai pro lado quantitativo. <br>Me diz qual é o seu tema e o que você quer investigar, que eu te ajudo a escolher as melhores 'ferramentas' pra essa expedição. E ó, não se preocupe em acertar de primeira. Metodologia é tipo receita de bolo, às vezes a gente ajusta um ingrediente aqui e ali. O importante é começar! Você consegue, Nikole! 🚀";
+                    } else if (lowerCaseMessage.includes("abnt")) {
+                        aiResponse = "ABNT... Ah, a nossa querida (só que não) Associação Brasileira de Normas Técnicas! 😂 Parece um bicho de sete cabeças, mas no fundo, ela só quer que seu trabalho fique bonitão e organizado. Pensa nela como a 'etiqueta' do mundo acadêmico. <br>Minha dica de ouro: não deixe pra última hora! Vai formatando aos pouquinhos. E outra: sua instituição geralmente tem um manualzinho próprio baseado na ABNT, já deu uma olhada? <br>Se precisar de um help pra uma citação específica ou como organizar as referências, grita aqui! A gente descomplica essa ABNT juntas. E olha, sobreviver à ABNT já te dá uns 10 pontos de resistência e bravura no TCC! Força na peruca! 😉";
+                    } else if (lowerCaseMessage.includes("obrigada") || lowerCaseMessage.includes("valeu") || lowerCaseMessage.includes("ajudou")) {
+                        aiResponse = "De nada, estrela! ✨ É pra isso que eu existo: facilitar sua jornada rumo ao diploma. Precisando de mais alguma luz, um empurrãozinho ou só alguém pra dizer que você é incrível (porque você é!), é só chamar. Continue brilhando nesse TCC, Nikole! Você tá arrasando! 😎";
+                    } else if (lowerCaseMessage.includes("olá") || lowerCaseMessage.includes("oi") || lowerCaseMessage.includes("ei")) {
+                        aiResponse = `E aí, Nikole! Pronta pra mais um round de genialidade no TCC? O que manda hoje, minha consagrada? Pode abrir seu coração (e suas dúvidas) que eu tô toda ouvidos... ou melhor, toda algoritmos! 😉`;
+                    }
+                    else {
+                        aiResponse = `Hmm, interessante sua colocação sobre "${message}". Sabe, Nikole, às vezes a gente empaca numa ideia e parece que não vai sair do lugar, né? Mas cada pergunta, cada reflexão, é um passo adiante. Que tal a gente explorar isso um pouco mais? Tenta me dar um pouco mais de contexto. E não esquece: você é super capaz e esse TCC vai ser um sucesso! Estou aqui para o que der e vier! 💪`;
+                    }
+                    addMessageToChat(aiResponse, 'ai');
+                }, 1000 + Math.random() * 1500); 
+            }
+        }
+
+        sendButton.addEventListener('click', handleSendMessage);
+        chatInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) { 
+                event.preventDefault(); 
+                handleSendMessage();
+            }
+        });
+
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        const initialWelcome = chatMessages.querySelector('.chat-bubble-ai');
+        if(initialWelcome) {
+            initialWelcome.style.opacity = '0';
+            initialWelcome.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                initialWelcome.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                initialWelcome.style.opacity = '1';
+                initialWelcome.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+    </script>
+</body>
+</html>
