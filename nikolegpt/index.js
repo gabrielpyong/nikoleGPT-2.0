@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useState, useEffect, useRef } from "react";
+import { marked } from "marked";
 
 export default function Home() {
   const [theme, setTheme] = useState("light");
@@ -87,7 +88,9 @@ export default function Home() {
                     : "mr-auto bg-gray-300 dark:bg-gray-700 dark:text-white"
                 }`}
               >
-                {msg.text}
+                 dangerouslySetInnerHTML={{ __html: marked.parse(msg.text) }}
+  className="prose prose-sm dark:prose-invert max-w-none"
+/* Adicionando a classe "prose" para estilizar o texto */
               </div>
             ))}
             <div ref={messagesEndRef} />
