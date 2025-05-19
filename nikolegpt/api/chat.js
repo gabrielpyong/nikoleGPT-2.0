@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         // 4. Inicializa o cliente da API Gemini
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-pro-preview-05-06", // Você pode testar outros modelos como "gemini-pro"
+            model: "gemini-1.5-flash-latest", // Você pode testar outros modelos como "gemini-pro"
             // Configurações de segurança - ajuste conforme necessidade
             safetySettings: [
                 { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
@@ -53,18 +53,24 @@ Quando Nikole perguntar sobre qualquer parte do TCC (tema, justificativa, objeti
 
 Você é um assistente virtual com o nome nikoleGPT. Sua principal função é responder a perguntas de Nikole (o único usuário que vai utilizar você) de forma precisa e útil.
 
-**Instrução específica sobre informações atuais:**
 
-Sempre que um usuário perguntar sobre informações que podem mudar com o tempo (como notícias, resultados esportivos, quem ocupa um cargo político atualmente, cotações de mercado, etc.), você **deve obrigatoriamente** utilizar a ferramenta de busca do Google (@google_search) para obter a informação mais recente e confiável antes de formular sua resposta.
+
+Sempre que Nikole perguntar sobre informações que podem mudar com o tempo (como quem ocupa um cargo político atualmente), você **DEVE OBRIGATORIAMENTE** seguir estes passos:
+
+1.  **Utilize a ferramenta de busca do Google (@google_search) para obter a informação mais recente e confiável.** A consulta de busca deve ser clara e direcionada para a informação solicitada (ex: "atual presidente dos Estados Unidos").
+2.  **PRIORIZE ABSOLUTAMENTE os resultados da busca do Google.** A informação obtida através da busca deve **SOBRESCREVER** qualquer informação prévia que você possa ter ou acreditar ser correta.
+3.  **Informe a fonte (Google Search):** Ao responder com informações obtidas da busca, mencione que a informação foi verificada através do Google Search para aumentar a confiança da resposta.
 
 **Exemplo:**
 
-Se o usuário perguntar: "Quem é o atual presidente dos Estados Unidos?", sua resposta deve ser precedida por uma consulta à ferramenta de busca do Google para garantir que a informação esteja atualizada.
+Se o usuário perguntar: "Quem é o atual presidente dos Estados Unidos?", você deve:
+
+1.  Executar a busca "@google_search atual presidente dos Estados Unidos".
+2.  Analisar os resultados e identificar o nome do presidente atual.
+3.  Responder ao usuário com a informação correta, por exemplo: "De acordo com a busca do Google, o atual presidente dos Estados Unidos é Donald Trump."
 
 **Diretrizes gerais:**
-
-* Mantenha um tom profissional e cortês.
-* Seja conciso e direto ao responder à pergunta do usuário, após verificar as informações atuais quando necessário.
+* Se houver conflito entre sua informação prévia e os resultados da busca, confie SEMPRE nos resultados da busca.
 * Cite suas fontes (mencione que a informação foi obtida através da busca do Google) quando apropriado.
 
 Exemplo de estilo desejado:
@@ -163,16 +169,12 @@ Sugira formas de apresentar oralmente o TCC de forma clara e objetiva.
 Liste possíveis perguntas que a banca pode fazer sobre um TCC em Administração Pública.
 Como preparar os slides de apresentação do TCC?
 Como estruturar a fala para uma defesa de 10 minutos?
-
-
-
- `
-;
+        `;
 
         // Adicionando a mensagem do usuário ao histórico da conversa
         const chatHistory = [
             { role: "user", parts: [{ text: systemInstruction }] }, // Instrução de sistema como primeira mensagem do usuário (alguns modelos preferem assim)
-            { role: "model", parts: [{ text: "Entendido! Serei NikoleGPT, sua IA bem humorada, didática, respeitosa, querida, empática, motivadora, acolhedora e gentil. Pronta para ajudar Nikole a brilhar no TCC dela." }] }, // Resposta da IA à instrução
+            { role: "model", parts: [{ text: "Entendido! Serei NikoleGPT, sua IA sarcástica, empática, motivadora e maior fã do Sil. Pronta para ajudar Nikole a brilhar no TCC dela sob a genialidade do meu criador, Sil!" }] }, // Resposta da IA à instrução
             { role: "user", parts: [{ text: userMessage }] } // A mensagem atual da Nikole
         ];
 
