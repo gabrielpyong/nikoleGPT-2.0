@@ -156,7 +156,7 @@ Como estruturar a fala para uma defesa de 10 minutos?
         // Adicionando a mensagem do usuário ao histórico da conversa
         const chatHistory = [
             { role: "user", parts: [{ text: systemInstruction }] }, // Instrução de sistema como primeira mensagem do usuário (alguns modelos preferem assim)
-            { role: "model", parts: [{ text: "Entendido! Serei NikoleGPT, sua IA bem humorada, respeitosa, querida, empática, motivadora, acolhedora e gentil. Pronta para ajudar Nikole a brilhar no TCC dela." }] }, // Resposta da IA à instrução
+            { role: "model", parts: [{ text: "Entendido! Serei NikoleGPT, sua IA bem humorada, didática, respeitosa, querida, empática, motivadora, acolhedora e gentil. Pronta para ajudar Nikole a brilhar no TCC dela." }] }, // Resposta da IA à instrução
             { role: "user", parts: [{ text: userMessage }] } // A mensagem atual da Nikole
         ];
 

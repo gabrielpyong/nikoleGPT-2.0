@@ -87,14 +87,15 @@ export default function Home() {
           >
             {messages.map((msg, idx) => (
               <div
-                key={idx}
-                className={`max-w-[80%] p-3 rounded-lg text-sm prose prose-sm dark:prose-invert max-w-none ${
-                  msg.sender === "user"
-                    ? "ml-auto bg-blue-600 text-white prose-invert"
-                    : "mr-auto bg-gray-300 dark:bg-gray-700 dark:text-white"
-                }`}
-                dangerouslySetInnerHTML={{ __html: marked.parse(msg.text) }}
-              ></div>
+  key={idx}
+  className={`max-w-[80%] p-3 rounded-lg text-sm prose prose-sm dark:prose-invert max-w-none ${
+    msg.sender === "user"
+      ? "ml-auto bg-blue-600 text-white prose-invert"
+      : "mr-auto bg-gray-300 dark:bg-gray-700 dark:text-white"
+  }`}
+  dangerouslySetInnerHTML={{ __html: marked.parse(msg.text) }}
+></div>
+
             ))}
             <div ref={messagesEndRef} />
           </div>
