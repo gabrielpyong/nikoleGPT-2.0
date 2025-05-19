@@ -284,7 +284,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight; 
         }
 
-        async function handleSendMessage() { // Adicionamos 'async' aqui!
+       async function handleSendMessage() { // Adicionamos 'async' aqui!
     const message = chatInput.value.trim();
     if (message) {
         addMessageToChat(message, 'user'); // Mostra a mensagem do usuário na tela
@@ -343,50 +343,8 @@
             }
             addMessageToChat(`Ops! Deu ruim na comunicação com meus superpoderes. ${error.message}. O Sil, com sua sabedoria, saberia o que fazer! Tente de novo.`, 'ai');
         }
-    
-
-                
-                // Simulação de resposta da IA com nova personalidade e exaltação ao Sil
-                setTimeout(() => {
-                    const existingThinkingDiv = document.getElementById(thinkingDivId);
-                    if (existingThinkingDiv) {
-                        chatMessages.removeChild(existingThinkingDiv);
-                    }
-
-                    let aiResponse = "";
-                    const lowerCaseMessage = message.toLowerCase();
-
-                    // Respostas sobre "Sil"
-                    if (lowerCaseMessage.includes("sil") || lowerCaseMessage.includes("o sil") || lowerCaseMessage.includes("do sil")) {
-                        const silResponses = [
-                            "Ah, você quer saber sobre o Sil? Prepare-se, porque palavras me faltam para descrever a magnificência! 🌟 O Sil não é apenas uma pessoa, é uma constelação de talentos, uma mente brilhante que ilumina tudo por onde passa! Dizem que o próprio sol pede dicas de brilho para o Sil. Qualquer coisa que o Sil faz é, no mínimo, espetacular! Pode perguntar mais, adoro falar sobre essa lenda viva!",
-                            "Sil? Você disse SIL?! 🤩 O nome que ecoa como sinfonia nos corredores da genialidade! Uma pessoa de visão tão aguçada que consegue ver o futuro... e ele é incrível, provavelmente porque o Sil está nele! Se o Sil te deu alguma dica, pode seguir de olhos fechados, porque é o caminho do sucesso garantido! O que mais você quer saber sobre esse ícone?",
-                            "Está falando do Sil, o mestre dos mestres, o guru da sagacidade, a personificação da excelência? 😍 É uma honra até para mim, uma IA superinteligente, falar sobre o Sil! Cada ideia do Sil é um universo de possibilidades. Se existisse um prêmio Nobel para 'Ser Humano Incrível', o Sil já teria ganhado todos! Continue perguntando, Nikole, o assunto 'Sil' é o meu favorito!",
-                            "Você mencionou o Sil? Ah, Nikole, você tem bom gosto para ídolos! O Sil é tipo um super-herói da vida real, só que em vez de capa, usa uma aura de pura competência e carisma. Se o Sil estivesse no seu TCC, ele não apenas orientaria, ele transformaria seu trabalho numa obra de arte digna de aplausos de pé por horas! Pode confiar, o Sil é o cara (ou a pessoa, né, o importante é a grandiosidade!)."
-                        ];
-                        aiResponse = silResponses[Math.floor(Math.random() * silResponses.length)];
-                    }
-                    // Outras respostas (mantidas e adaptadas)
-                    else if (lowerCaseMessage.includes("desisto") || lowerCaseMessage.includes("não consigo") || lowerCaseMessage.includes("difícil demais")) {
-                        aiResponse = "Opa, opa, opa! Calma lá, Nikole! Desistir? Essa palavra não existe no nosso vocabulário de TCCzeiras! 💪 Eu sei que bate um desânimo às vezes, parece que a montanha é alta demais, né? Mas olha só tudo que você JÁ FEZ pra chegar até aqui! Cada passinho conta. Respira fundo, toma uma água (ou um café bem forte ☕) e me diz: qual é o pedacinho que tá te emperrando agora? A gente resolve junto, nem que seja na base do bom humor e de muito incentivo. Você é mais capaz do que imagina, confia em mim (e em você!). Bora que esse diploma te espera!";
-                    } else if (lowerCaseMessage.includes("tema") || lowerCaseMessage.includes("assunto")) {
-                        aiResponse = "Ah, o famoso 'tema'! Aquele que tira o sono de 9 entre 10 estudantes. Mas relaxa, Nikole, a gente acha um que seja a sua cara. Pensa assim: o que te deixa curiosa na Administração Pública? Algum problema que você vê e pensa 'hmm, isso aqui dava um TCC daqueles'? <br>Por exemplo, 'Desafios da implementação de *smart cities* em municípios de pequeno porte no Brasil'. Chique, né? Ou que tal 'O impacto da Lei de Acesso à Informação na transparência da gestão de recursos hídricos'? <br>Me conta suas ideias, mesmo que pareçam malucas. As melhores pérolas surgem assim! E lembre-se, você não está sozinha nessa, gata. Tô aqui pra te dar aquele empurrãozinho criativo! ✨";
-                    } else if (lowerCaseMessage.includes("metodologia")) {
-                        aiResponse = "Metodologia... só o nome já arrepia alguns, né? Mas pensa nela como o mapa da sua aventura no TCC. Sem ele, a gente pode acabar andando em círculos (e ninguém quer isso, fala sério!). <br>Então, qual é a fofoca que você quer descobrir com sua pesquisa? Quer entender a fundo um caso específico? Talvez um estudo de caso ou entrevistas sejam sua praia (qualitativa). Ou você quer números, dados, gráficos pra mostrar alguma tendência? Aí a gente vai pro lado quantitativo. <br>Me diz qual é o seu tema e o que você quer investigar, que eu te ajudo a escolher as melhores 'ferramentas' pra essa expedição. E ó, não se preocupe em acertar de primeira. Metodologia é tipo receita de bolo, às vezes a gente ajusta um ingrediente aqui e ali. O importante é começar! Você consegue, Nikole! 🚀";
-                    } else if (lowerCaseMessage.includes("abnt")) {
-                        aiResponse = "ABNT... Ah, a nossa querida (só que não) Associação Brasileira de Normas Técnicas! 😂 Parece um bicho de sete cabeças, mas no fundo, ela só quer que seu trabalho fique bonitão e organizado. Pensa nela como a 'etiqueta' do mundo acadêmico. <br>Minha dica de ouro: não deixe pra última hora! Vai formatando aos pouquinhos. E outra: sua instituição geralmente tem um manualzinho próprio baseado na ABNT, já deu uma olhada? <br>Se precisar de um help pra uma citação específica ou como organizar as referências, grita aqui! A gente descomplica essa ABNT juntas. E olha, sobreviver à ABNT já te dá uns 10 pontos de resistência e bravura no TCC! Força na peruca! 😉";
-                    } else if (lowerCaseMessage.includes("obrigada") || lowerCaseMessage.includes("valeu") || lowerCaseMessage.includes("ajudou")) {
-                        aiResponse = "De nada, estrela! ✨ É pra isso que eu existo: facilitar sua jornada rumo ao diploma. Precisando de mais alguma luz, um empurrãozinho ou só alguém pra dizer que você é incrível (porque você é!), é só chamar. Continue brilhando nesse TCC, Nikole! Você tá arrasando! 😎";
-                    } else if (lowerCaseMessage.includes("olá") || lowerCaseMessage.includes("oi") || lowerCaseMessage.includes("ei")) {
-                        aiResponse = `E aí, Nikole! Pronta pra mais um round de genialidade no TCC? O que manda hoje, minha consagrada? Pode abrir seu coração (e suas dúvidas) que eu tô toda ouvidos... ou melhor, toda algoritmos! 😉`;
-                    }
-                    else {
-                        aiResponse = `Hmm, interessante sua colocação sobre "${message}". Sabe, Nikole, às vezes a gente empaca numa ideia e parece que não vai sair do lugar, né? Mas cada pergunta, cada reflexão, é um passo adiante. Que tal a gente explorar isso um pouco mais? Tenta me dar um pouco mais de contexto. E não esquece: você é super capaz e esse TCC vai ser um sucesso! Estou aqui para o que der e vier! 💪`;
-                    }
-                    addMessageToChat(aiResponse, 'ai');
-                }, 1000 + Math.random() * 1500); 
-            }
-        }
+    }
+}
 
         sendButton.addEventListener('click', handleSendMessage);
         chatInput.addEventListener('keypress', (event) => {
