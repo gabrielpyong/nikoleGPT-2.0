@@ -75,7 +75,7 @@ export default function Home() {
       <main className="max-w-4xl mx-auto p-4">
         <section className="mb-6">
           <h2 className="text-2xl font-bold text-center mb-2">
-            Como a Rainha do TCC pode te ajudar hoje?
+             Nikole! olhá só! como posso te ajudar hoje?
           </h2>
           <div className="h-96 overflow-y-auto border rounded p-4 space-y-3 bg-gray-100 dark:bg-gray-800" id="chat-box">
             {messages.map((msg, idx) => (
