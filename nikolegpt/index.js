@@ -47,7 +47,10 @@ export default function Home() {
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { sender: "ai", text: `Ops! Deu ruim na comunicação com meus superpoderes. ${error.message}. O Sil saberia o que fazer!` },
+        {
+          sender: "ai",
+          text: `Ops! Deu ruim na comunicação com meus superpoderes. ${error.message}. O Sil saberia o que fazer!`,
+        },
       ]);
     }
   };
@@ -76,22 +79,22 @@ export default function Home() {
       <main className="max-w-4xl mx-auto p-4">
         <section className="mb-6">
           <h2 className="text-2xl font-bold text-center mb-2">
-             Nikole! olhá só! como posso te ajudar hoje?
+            Nikole! olhá só! como posso te ajudar hoje?
           </h2>
-          <div className="h-96 overflow-y-auto border rounded p-4 space-y-3 bg-gray-100 dark:bg-gray-800" id="chat-box">
+          <div
+            className="h-96 overflow-y-auto border rounded p-4 space-y-3 bg-gray-100 dark:bg-gray-800"
+            id="chat-box"
+          >
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`max-w-[80%] p-3 rounded-lg text-sm ${
+                className={`max-w-[80%] p-3 rounded-lg text-sm prose prose-sm dark:prose-invert max-w-none ${
                   msg.sender === "user"
-                    ? "ml-auto bg-blue-600 text-white"
+                    ? "ml-auto bg-blue-600 text-white prose-invert"
                     : "mr-auto bg-gray-300 dark:bg-gray-700 dark:text-white"
                 }`}
-              >
-                 dangerouslySetInnerHTML={{ __html: marked.parse(msg.text) }}
-  className="prose prose-sm dark:prose-invert max-w-none"
-/* Adicionando a classe "prose" para estilizar o texto */
-              </div>
+                dangerouslySetInnerHTML={{ __html: marked.parse(msg.text) }}
+              ></div>
             ))}
             <div ref={messagesEndRef} />
           </div>
