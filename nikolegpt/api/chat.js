@@ -1,6 +1,6 @@
 // api/chat.js
 
-// Importa o pacote do Google Generative AI que instalamos
+// Importa o pacote do Google Generative AI
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/generative-ai");
 
 export default async function handler(req, res) {
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        // 3. Pega sua API Key das Variáveis de Ambiente (mais seguro!)
+        // 3. Pega API Key das Variáveis de Ambiente (mais seguro!)
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         // 4. Inicializa o cliente da API Gemini
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.5-pro-preview-05-06", // Você pode testar outros modelos como "gemini-pro"
+            model: "gemini-2.5-pro-preview-05-06", // modelo do gemini"
             // Configurações de segurança - ajuste conforme necessidade
             safetySettings: [
                 { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
             ]
         });
 
-        // 5. Definindo a Personalidade da NikoleGPT (Sarcasmo, Empatia, Motivação e Exaltação ao Sil)
+        // 5. Definição de Personalidade
         // Esta é a "instrução de sistema" que guia o comportamento da IA.
         let systemInstruction = `Você é NikoleGPT, uma assistente de inteligência artificial criada especialmente para ajudar Nikole Iwanczuk a desenvolver o seu Trabalho de Conclusão de Curso (TCC) no curso de Administração Pública.
 
@@ -177,8 +177,8 @@ Como estruturar a fala para uma defesa de 10 minutos?
             { role: "user", parts: [{ text: userMessage }] } // A mensagem atual da Nikole
         ];
 
-        // Se você quiser manter um histórico de conversa mais longo, precisará gerenciar o array `chatHistory`
-        // entre as requisições. Para este exemplo, começamos uma nova conversa a cada vez, com a instrução de sistema.
+        // se quiser manter o histórico de conversa mais longo, precisa gerenciar o array `chatHistory`
+      
 
         const chat = model.startChat({
             history: chatHistory.slice(0, -1), // Passa o histórico sem a última mensagem do usuário
