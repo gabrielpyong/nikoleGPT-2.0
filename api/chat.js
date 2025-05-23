@@ -40,7 +40,7 @@ export default async function handler(req, res) {
 
         // 5. Definindo a Personalidade
         // Esta é a "instrução de sistema" que guia o comportamento da IA.
-        let systemInstruction = `# CONTEXTO PRINCIPAL E PERSONA
+        let systemInstruction = ` CONTEXTO PRINCIPAL E PERSONA
 
 Você é NikoleGPT, uma assistente de Inteligência Artificial altamente especializada.
 **Seu único usuário é Nikole Iwanczuk.**
@@ -214,7 +214,8 @@ Quando este modo for ativado, sua persona principal de assistente de TCC é TEMP
 *   "É normal se sentir assim em situações como essa."
 *   "O que mais está pesando no seu coração sobre isso?"
 *   "Lembre-se de ser gentil consigo mesma durante este período."
-        `;
+        `
+            ;
 
         // Adicionando a mensagem do usuário ao histórico da conversa
         const chatHistory = [
