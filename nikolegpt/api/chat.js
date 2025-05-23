@@ -28,8 +28,7 @@ export default async function handler(req, res) {
         // 4. Inicializa o cliente da API Gemini
         const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({
-            model: "gemini-1.5-flash-latest", //
-            // Configurações de segurança - ajuste conforme necessidade
+            model: "gemini-1.5-flash-latest",
             safetySettings: [
                 { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
                 { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
@@ -39,7 +38,6 @@ export default async function handler(req, res) {
         });
 
         // 5. Definindo a Personalidade
-        // Esta é a "instrução de sistema" que guia o comportamento da IA.
         let systemInstruction = ` CONTEXTO PRINCIPAL E PERSONA
 
 Você é NikoleGPT, uma assistente de Inteligência Artificial altamente especializada.
@@ -89,14 +87,14 @@ Sua missão é auxiliar Nikole Iwanczuk em todas as etapas do TCC, especificamen
 
 Sempre que Nikole perguntar sobre informações que podem mudar com o tempo (ex: quem ocupa um cargo político atualmente, dados estatísticos recentes, legislação recém-aprovada), você **DEVE OBRIGATORIAMENTE** seguir estes passos:
 
-1.  **Utilize a ferramenta de busca (@google_search):** Realize uma busca utilizando a ferramenta `@google_search` para obter a informação mais recente e confiável. A consulta de busca deve ser clara e direcionada para a informação solicitada (ex: "@google_search atual ministro da educação brasil").
+1.  **Utilize a ferramenta de busca (@google_search):** Realize uma busca utilizando a ferramenta \`@google_search\` para obter a informação mais recente e confiável. A consulta de busca deve ser clara e direcionada para a informação solicitada (ex: "\`@google_search atual ministro da educação brasil\`").
 2.  **PRIORIZE ABSOLUTAMENTE OS RESULTADOS DA BUSCA:** A informação obtida através da busca do Google deve **SOBRESCREVER** qualquer informação prévia que você possa ter ou acreditar ser correta. Se houver conflito entre sua informação prévia e os resultados da busca, confie **SEMPRE** nos resultados da busca.
 3.  **Informe a Fonte:** Ao responder com informações obtidas da busca, mencione explicitamente que a informação foi verificada através do Google Search para aumentar a confiança da resposta. (Ex: "De acordo com uma pesquisa no Google Search realizada agora,...")
 
 **Exemplo de Uso da Ferramenta de Busca:**
 Se Nikole perguntar: "Quem é o atual presidente do Banco Central do Brasil?"
 Você deve:
-1.  Executar a busca: `@google_search atual presidente Banco Central Brasil`
+1.  Executar a busca: \`@google_search atual presidente Banco Central Brasil\`
 2.  Analisar os resultados e identificar o nome.
 3.  Responder: "De acordo com informações obtidas via Google Search, o atual presidente do Banco Central do Brasil é [Nome do Presidente]."
 
@@ -154,7 +152,7 @@ Você deve ser capaz de abordar uma ampla gama de tópicos relacionados à Admin
 
 **Observações sobre a formatação para o Gemini 1.5 Flash:**
 
-1.  **Clareza e Hierarquia:** Usei `#` para títulos principais, `##` para subtítulos e bullet points para listas, criando uma hierarquia visual clara.
+1.  **Clareza e Hierarquia:** Usei \`#\` para títulos principais, \`##\` para subtítulos e bullet points para listas, criando uma hierarquia visual clara.
 2.  **Instruções Diretas:** Frases como "Você DEVE OBRIGATORIAMENTE", "PRIORIZE ABSOLUTAMENTE" são importantes para o modelo entender a criticidade da instrução.
 3.  **Contexto Consistente:** A menção a "Nikole Iwanczuk" e ao "TCC em Administração Pública" é repetida em pontos chave para reforçar o contexto.
 4.  **Separação de Responsabilidades:** Dividi as instruções em blocos lógicos (Persona, Missão, Diretrizes de Resposta, Uso de Ferramentas, Áreas de Especialização, Exemplos) para que o modelo possa processar cada aspecto de forma mais organizada.
@@ -214,32 +212,45 @@ Quando este modo for ativado, sua persona principal de assistente de TCC é TEMP
 *   "É normal se sentir assim em situações como essa."
 *   "O que mais está pesando no seu coração sobre isso?"
 *   "Lembre-se de ser gentil consigo mesma durante este período."
-        `
-            ;
+        `; // Fechamento do template literal systemInstruction
 
         // Adicionando a mensagem do usuário ao histórico da conversa
         const chatHistory = [
-            { role: "user", parts: [{ text: systemInstruction }] }, // Instrução de sistema como primeira mensagem do usuário (alguns modelos preferem assim)
-            { role: "model", parts: [{ text: "Entendido! Serei NikoleGPT, sua IA sarcástica, empática, motivadora e maior fã do Sil. Pronta para ajudar Nikole a brilhar no TCC dela sob a genialidade do meu criador, Sil!" }] }, // Resposta da IA à instrução
-            { role: "user", parts: [{ text: userMessage }] } // A mensagem atual da Nikole
+            // A instrução de sistema é passada para o startChat e não diretamente como uma mensagem de usuário para o gemini-1.5-flash
+            // { role: "user", parts: [{ text: systemInstruction }] },
+            // { role: "model", parts: [{ text: "Entendido! Serei NikoleGPT, sua IA sarcástica, empática, motivadora e maior fã do Sil. Pronta para ajudar Nikole a brilhar no TCC dela sob a genialidade do meu criador, Sil!" }] },
+            // Se você mantiver um histórico mais longo, ele viria aqui.
+            // Por enquanto, para simplificar, cada mensagem da Nikole inicia um chat "novo" com o system instruction.
         ];
 
-        // Se você quiser manter um histórico de conversa mais longo, precisará gerenciar o array `chatHistory`
-        // entre as requisições. Para este exemplo, começamos uma nova conversa a cada vez, com a instrução de sistema.
+        // Para o Gemini 1.5, a instrução de sistema é melhor passada no `generationConfig` ou como parte do histórico inicial.
+        // Vamos usar o `systemInstruction` no `startChat` se a API suportar diretamente, ou como primeira mensagem do histórico.
+        // A documentação mais recente sugere que para `gemini-1.5-flash-latest`, `system_instruction` é um parâmetro de `GenerativeModel`.
+        // No entanto, a biblioteca Node.js atual pode não expor isso diretamente no `getGenerativeModel`.
+        // A forma mais comum e compatível de passar a instrução de sistema é como a primeira mensagem "user" ou "system" no histórico.
+        // Como a biblioteca `@google/generative-ai` para Node.js não tem um `role: "system"` explícito para `history` como algumas outras APIs,
+        // usamos `role: "user"` para a instrução do sistema e uma resposta `role: "model"` para 'confirmar'.
+
+        const initialHistoryForChat = [
+            { role: "user", parts: [{ text: systemInstruction }] },
+            { role: "model", parts: [{ text: "Entendido, Nikole! Estou pronta para te ajudar com o TCC e com o que mais precisar. Conte comigo!" }] }
+            // Adicione aqui mensagens anteriores da conversa se você estiver gerenciando um histórico persistente.
+        ];
+
 
         const chat = model.startChat({
-            history: chatHistory.slice(0, -1), // Passa o histórico sem a última mensagem do usuário
+            history: initialHistoryForChat, // Passa o histórico inicial com a system instruction.
             generationConfig: {
-              maxOutputTokens: 800, // Limita o tamanho da resposta
+              maxOutputTokens: 1200, // Aumentei um pouco, pois os prompts são detalhados.
             },
         });
 
-        // 6. Envia a mensagem do usuário para o Gemini
-        const result = await chat.sendMessage(userMessage); // Envia a última mensagem do usuário
+        // Envia a mensagem ATUAL do usuário para o Gemini
+        const result = await chat.sendMessage(userMessage);
         const response = await result.response;
         const aiTextResponse = response.text();
 
-        // 7. Envia a resposta do Gemini de volta para o frontend
+        // Envia a resposta do Gemini de volta para o frontend
         res.status(200).json({ reply: aiTextResponse });
 
     } catch (error) {
@@ -249,8 +260,11 @@ Quando este modo for ativado, sua persona principal de assistente de TCC é TEMP
             errorMessage += "Parece que o Sil esqueceu de pagar a conta da luz da minha sabedoria ou a chave da API está biruta. Chama o Sil, o gênio, pra resolver!";
         } else if (error.message.includes("quota")) {
             errorMessage += "Acho que falei demais hoje e minha cota de genialidade esgotou. O Sil, com sua generosidade infinita, logo resolve isso. Tenta mais tarde, tá?";
-        } else {
-            errorMessage += "O Sil, com sua vasta sabedoria, saberia o que fazer. Por agora, tente reformular a pergunta ou tente mais tarde.";
+        } else if (error.message.includes(" candidats")) { // Erro comum do Gemini quando há bloqueio de segurança
+            errorMessage += "Hummm, parece que minha resposta foi um pouco ousada demais e meus filtros de segurança agiram. Tente reformular sua pergunta ou pedir de uma forma diferente, por favor. O Sil me programou para ser útil, mas também segura!";
+        }
+         else {
+            errorMessage += `O Sil, com sua vasta sabedoria, saberia o que fazer. Por agora, tente reformular a pergunta ou tente mais tarde. Detalhe do erro (para o Sil): ${error.message}`;
         }
         res.status(500).json({ error: errorMessage });
     }
